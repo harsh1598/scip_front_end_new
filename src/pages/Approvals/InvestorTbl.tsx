@@ -1,0 +1,156 @@
+import React, { useEffect, useState } from "react";
+import { Col, Row, Input } from "reactstrap";
+import Grid, { GridColumn, GridHeader, GridRow, } from "../../Components/Grid/Grid";
+import { Link } from "react-router-dom";
+import Details from "./Details";
+import TransactionDetails from "./TransactionDetails";
+
+const crmcontacts: any[] = [
+  {
+    id: 1,
+    name: "Vucky Shau",
+    CompanyCampaignName: "Test Company",
+    task: "Company Profile",
+    date: "08/05/2023",
+    price: "11,00,00,002",
+    type: "0"
+  },
+  {
+    id: 2,
+    name: "Vucky Shau",
+    CompanyCampaignName: "Test Company",
+    task: "Company Profile",
+    date: "08/05/2023",
+    price: "11,00,00,002",
+    type: "0"
+  },
+  {
+    id: 3,
+    name: "Vanky Bai",
+    CompanyCampaignName: "Test Company",
+    task: "Company Profile",
+    date: "08/05/2023",
+    price: "1,15,00,000",
+    type: "1"
+  },
+  {
+    id: 4,
+    name: "Amitjik Shankak",
+    CompanyCampaignName: "Test Company",
+    task: "Company Profile",
+    date: "08/05/2023",
+    price: "12,50,001",
+    type: "1"
+  }
+];
+
+const headers: GridHeader[] = [
+  {
+    title: "User Name",
+    classTitle: "text-start",
+  },
+  {
+    title: "Company & Campaign Name",
+    class: "text-center",
+  },
+  {
+    title: "Task",
+    class: "text-center",
+  },
+  {
+    title: "Date",
+    class: "text-center",
+  },
+  {
+    title: "Action",
+    class: "text-center",
+  },
+];
+
+const InvestorTbl = () => {
+  const [rows, setRows] = useState<GridRow[]>([]);
+  const [totalCount, setTotalCount] = useState(100);
+  const [modelName, setModelName] = useState("");
+
+  const toggle = (name: any) => {
+    setModelName(name);
+  };
+
+  useEffect(() => {
+    getlist(1);
+  }, []);
+
+  const getlist = (page?: any) => {
+    let rows: GridRow[] = [];
+    const res: any = {};
+    res.list = crmcontacts;
+    for (var i in res.list) {
+      let columns: GridColumn[] = [];
+      columns.push({ value: res.list[i].name });
+      columns.push({ value: res.list[i].CompanyCampaignName });
+      columns.push({ value: res.list[i].task });
+      columns.push({ value: res.list[i].date });
+      columns.push({ value: actionList(res.list[i].id, res.list[i].type, res.list[i].price) });
+      rows.push({ data: columns });
+    }
+    setRows(rows);
+  };
+
+  const actionList = (id: any, type: any, price: any) => {
+    return (
+      <>
+        {
+          type === "1" ?
+            <>
+              <p className="mb-0">{price} INR</p>
+              <Link to="#" className="btn rounded-pill btn-soft-secondary me-1 btn-sm" onClick={e => toggle('TransactionDetails')} >Please confirm if the fund is received by ESCROW </Link>
+            </>
+             :
+            <>
+              <Link to="#" className="btn rounded-pill btn-soft-secondary me-1 btn-sm" onClick={e => toggle('view')}  >View</Link>
+            </>
+        }
+      </>
+    );
+  };
+  return (
+    <React.Fragment>
+      <Row>
+        <Col sm={12} lg={4}>
+          <div className="mb-2">
+            <div className="search-box">
+              <Input
+                type="text"
+                className="form-control search"
+                placeholder="User Name"
+              />
+              <i className="ri-search-line search-icon"></i>
+            </div>
+          </div>
+        </Col>
+      </Row>
+      <div className="px-3 mt-3">
+        <div className="table-card">
+          <Grid
+            headers={headers}
+            rows={rows}
+            count={totalCount}
+            perPageItem={5}
+            errorMessage={"No Data Found"}
+            ShowLoader={false}
+          />
+        </div>
+      </div>
+      <Details
+        show={modelName === 'view' ? true : false}
+        onCloseClick={() => setModelName("")}
+      />
+      <TransactionDetails
+        show={modelName === 'TransactionDetails' ? true : false}
+        onCloseClick={() => setModelName("")}
+      />
+    </React.Fragment>
+  );
+};
+
+export default InvestorTbl;
